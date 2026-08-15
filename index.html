@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Duggu Birthday Surprise</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#080014;
+ color:white;
+ overflow:hidden;
+ text-align:center;
+}
+
+.page{
+ display:none;
+ width:100%;
+ height:100vh;
+ padding:20px;
+ align-items:center;
+ justify-content:center;
+}
+
+.page.active{display:flex}
+
+.card{
+ width:100%;
+ max-width:540px;
+ padding:28px 20px;
+ border-radius:28px;
+ background:rgba(255,255,255,.1);
+ box-shadow:0 15px 60px rgba(0,0,0,.5);
+}
+
+button{
+ width:100%;
+ max-width:430px;
+ padding:16px;
+ margin:10px auto;
+ border:0;
+ border-radius:18px;
+ font-size:18px;
+ font-weight:bold;
+ cursor:pointer;
+ background:white;
+ color:#222;
+ touch-action:manipulation;
+}
+
+button:active{
+ transform:scale(.96);
+}
+
+#page1{
+ background:
+ radial-gradient(circle at 20% 20%,#ff4ecd,transparent 30%),
+ radial-gradient(circle at 80% 80%,#4776ff,transparent 35%),
+ #080014;
+}
+
+.gift{
+ font-size:90px;
+ animation:float 2s infinite alternate;
+}
+
+@keyframes float{
+ from{transform:translateY(0)}
+ to{transform:translateY(-15px)}
+}
+
+#page2{
+ padding:0;
+ align-items:flex-start;
+ background:linear-gradient(135deg,#667eea,#764ba2);
+}
+
+#game{
+ width:100%;
+ height:100vh;
+ position:relative;
+ overflow:hidden;
+}
+
+#balloonArea{
+ position:absolute;
+ left:0;
+ right:0;
+ top:85px;
+ bottom:0;
+ overflow:hidden;
+}
+
+.balloon{
+ position:absolute;
+ bottom:-100px;
+ font-size:64px;
+ z-index:20;
+ user-select:none;
+ -webkit-user-select:none;
+ touch-action:none;
+ animation:rise linear forwards;
+}
+
+@keyframes rise{
+ from{bottom:-100px}
+ to{bottom:110%}
+}
+
+.pop{
+ position:fixed;
+ z-index:999;
+ font-size:55px;
+ pointer-events:none;
+ animation:pop .5s forwards;
+}
+
+@keyframes pop{
+ from{transform:scale(.4);opacity:1}
+ to{transform:scale(2);opacity:0}
+}
+
+#page3{
+ background:linear-gradient(135deg,#6a11cb,#2575fc);
+}
+
+.question{
+ font-size:23px;
+ line-height:1.5;
+ margin:25px 0;
+}
+
+#result{
+ min-height:60px;
+ font-size:22px;
+ font-weight:bold;
+}
+
+#page4{
+ background:
+ radial-gradient(circle at 20% 20%,#ff4ecd,transparent 30%),
+ radial-gradient(circle at 80% 80%,#5148ff,transparent 35%),
+ #050510;
+}
+
+.secret{
+ font-size:50px;
+ font-weight:900;
+ color:#ffd34d;
+ text-shadow:0 0 20px #ff4ecd;
+}
+
+#page5{
+ background:
+ radial-gradient(circle at 50% 30%,#ff4d9d,transparent 30%),
+ radial-gradient(circle at 20% 80%,#5d5cff,transparent 35%),
+ #080014;
+}
+
+.final{
+ font-size:40px;
+ font-weight:900;
+}
+
+.final-message{
+ font-size:19px;
+ line-height:1.7;
+ margin-top:25px;
+}
+
+.spark{
+ position:fixed;
+ z-index:999;
+ pointer-events:none;
+ font-size:30px;
+ animation:spark 1.2s forwards;
+}
+
+@keyframes spark{
+ from{transform:scale(.2);opacity:1}
+ to{transform:scale(2);opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<!-- PAGE 1 -->
+
+<section class="page active" id="page1">
+
+<div class="card">
+
+<div class="gift">🎁</div>
+
+<h1>HEY DUGGU! 👀</h1>
+
+<p style="font-size:22px">
+Tere liye kuch special banaya hai.
+</p>
+
+<p>
+Aaj birthday hai bhai... full enjoy hoga 😎
+</p>
+
+<button onclick="startSurprise()">
+🚀 START THE SURPRISE
+</button>
+
+</div>
+</section>
+
+
+<!-- PAGE 2 -->
+
+<section class="page" id="page2">
+
+<div id="game">
+
+<h2>🎈 DUGGU'S BALLOON GAME 🎈</h2>
+
+<div id="score">Balloons: 0 / 10</div>
+
+<div id="balloonArea"></div>
+
+</div>
+
+</section>
+
+
+<!-- PAGE 3 -->
+
+<section class="page" id="page3">
+
+<div class="card">
+
+<div id="qnumber">Question 1 of 4</div>
+
+<h1>🧠 DUGGU QUIZ</h1>
+
+<div class="question" id="question"></div>
+
+<div id="options"></div>
+
+<div id="result"></div>
+
+<button id="next"
+style="display:none"
+onclick="nextQuestion()">
+NEXT ➡️
+</button>
+
+</div>
+</section>
+
+
+<!-- PAGE 4 -->
+
+<section class="page" id="page4">
+
+<div class="card">
+
+<h1>🎁 ONE LAST SURPRISE</h1>
+
+<div id="secretText"
+style="font-size:23px;line-height:1.6">
+
+Duggu... tujhe pata hai tera ek naam rakha hai maine? 👀
+
+</div>
+
+<button onclick="showSecret()">
+👀 KYA NAAM?
+</button>
+
+<div id="secretOptions"></div>
+
+</div>
+
+</section>
+
+
+<!-- PAGE 5 -->
+
+<section class="page" id="page5">
+
+<div class="card">
+
+<div style="font-size:90px">🎂</div>
+
+<div class="final">
+HAPPY BIRTHDAY<br>
+DUGGU! 🎉
+</div>
+
+<div class="final-message">
+
+<p>
+Happy birthday bhai God bless you.
+</p>
+
+<p>
+Mujhe nahi pata ki tujhe wish karne ka ye wala tareeka kaisa lagega jaisa bhi lage mujhe jaroor batana.
+</p>
+
+<p>
+Maine socha ki wish to sabhi karte hai isliye is baar m wish kar raha hu to thoda alag to hoga hi 😄.
+</p>
+
+<p>
+<strong>
+Happy birthday once again 🫂🤗
+</strong>
+</p>
+
+</div>
+
+</div>
+</section>
+
+
+<script>
+
+/* =========================
+VOICE
+========================= */
+
+function speak(text){
+
+ if(!("speechSynthesis" in window)) return;
+
+ speechSynthesis.cancel();
+
+ let voices=speechSynthesis.getVoices();
+
+ let male=voices.find(v=>{
+  let n=v.name.toLowerCase();
+  let l=v.lang.toLowerCase();
+
+  return l.includes("hi") &&
+  (
+   n.includes("male") ||
+   n.includes("man") ||
+   n.includes("ravi") ||
+   n.includes("madhur")
+  );
+ });
+
+ if(!male){
+  male=voices.find(v=>
+   v.lang.toLowerCase().includes("hi")
+  );
+ }
+
+ let u=new SpeechSynthesisUtterance(text);
+
+ u.lang="hi-IN";
+ u.rate=.88;
+ u.pitch=.75;
+ u.volume=1;
+
+ if(male) u.voice=male;
+
+ speechSynthesis.speak(u);
+}
+
+
+/* =========================
+PAGE
+========================= */
+
+function page(n){
+
+ document.querySelectorAll(".page")
+ .forEach(p=>p.classList.remove("active"));
+
+ document
+ .getElementById("page"+n)
+ .classList.add("active");
+}
+
+
+/* =========================
+START
+========================= */
+
+function startSurprise(){
+
+ page(2);
+
+ speak(
+  "Haan mere bhai, kya haal hai? Aaj to birthday hai, full enjoy hoga! Chal bhai, balloons phod!"
+ );
+
+ startBalloons();
+}
+
+
+/* =========================
+BALLOONS
+========================= */
+
+let popped=0;
+let gameStarted=false;
+let balloonTimer;
+
+
+function startBalloons(){
+
+ if(gameStarted) return;
+
+ gameStarted=true;
+ popped=0;
+
+ document.getElementById("score")
+ .innerText="Balloons: 0 / 10";
+
+ for(let i=0;i<2;i++){
+  setTimeout(createBalloon,i*500);
+ }
+
+ balloonTimer=setInterval(function(){
+
+  if(popped<10){
+   createBalloon();
+  }
+
+ },900);
+}
+
+
+function createBalloon(){
+
+ if(popped>=10)return;
+
+ const area=
+ document.getElementById("balloonArea");
+
+ const b=
+ document.createElement("div");
+
+ b.className="balloon";
+ b.innerText="🎈";
+
+ b.style.left=
+ Math.floor(Math.random()*82)+"%";
+
+ b.style.animationDuration=
+ (3.5+Math.random()*2)+"s";
+
+ let poppedAlready=false;
+
+ function burst(e){
+
+  if(e){
+   e.preventDefault();
+   e.stopPropagation();
+  }
+
+  if(poppedAlready)return;
+
+  poppedAlready=true;
+
+  const rect=b.getBoundingClientRect();
+
+  b.remove();
+
+  popped++;
+
+  document.getElementById("score")
+  .innerText=
+  "Balloons: "+popped+" / 10";
+
+  popSound();
+
+  const p=document.createElement("div");
+
+  p.className="pop";
+  p.innerText="💥";
+
+  p.style.left=
+  (rect.left+rect.width/2-25)+"px";
+
+  p.style.top=
+  (rect.top+rect.height/2-25)+"px";
+
+  document.body.appendChild(p);
+
+  setTimeout(()=>p.remove(),600);
+
+  if(popped>=10){
+
+   clearInterval(balloonTimer);
+
+   setTimeout(function(){
+
+    sparkles();
+
+    speak(
+     "Wah mere bhai! Saare balloons phod diye! Chal ab next game mein chalte hain. Kuch questions hain!"
+    );
+
+    setTimeout(function(){
+
+     page(3);
+
+     loadQuestion();
+
+    },3500);
+
+   },500);
+  }
+ }
+
+ b.addEventListener(
+  "pointerdown",
+  burst,
+  {passive:false}
+ );
+
+ b.addEventListener(
+  "touchstart",
+  burst,
+  {passive:false}
+ );
+
+ b.addEventListener(
+  "click",
+  burst
+ );
+
+ area.appendChild(b);
+}
+
+
+/* =========================
+POP SOUND
+========================= */
+
+let audioCtx=null;
+
+
+function popSound(){
+
+ try{
+
+  if(!audioCtx){
+
+   const AC=
+   window.AudioContext||
+   window.webkitAudioContext;
+
+   audioCtx=new AC();
+  }
+
+  if(audioCtx.state==="suspended"){
+   audioCtx.resume();
+  }
+
+  let o=
+  audioCtx.createOscillator();
+
+  let g=
+  audioCtx.createGain();
+
+  o.type="sawtooth";
+
+  o.frequency.setValueAtTime(
+   220,
+   audioCtx.currentTime
+  );
+
+  o.frequency.exponentialRampToValueAtTime(
+   45,
+   audioCtx.currentTime+.15
+  );
+
+  g.gain.setValueAtTime(
+   .3,
+   audioCtx.currentTime
+  );
+
+  g.gain.exponentialRampToValueAtTime(
+   .001,
+   audioCtx.currentTime+.15
+  );
+
+  o.connect(g);
+  g.connect(audioCtx.destination);
+
+  o.start();
+
+  o.stop(
+   audioCtx.currentTime+.15
+  );
+
+ }catch(e){}
+
+}
+
+
+/* =========================
+QUESTIONS
+========================= */
+
+const questions=[
+
+{
+ q:"Tumhari mummy ke bhai ki mummy tumhari kya lagti hain?",
+ o:["Dadi","Nani","Chachi","Bua"],
+ a:1
+},
+
+{
+ q:"Tumhari mummy ki behen ki beti tumhari kya lagti hai?",
+ o:["Bua","Mausi","Mameri behen","Chachi"],
+ a:2
+},
+
+{
+ q:"Ek race mein tum 2nd position wale person ko overtake kar dete ho. Ab tumhari position kya hogi?",
+ o:["1st","2nd","3rd","4th"],
+ a:1
+},
+
+{
+ q:"Duggu ka birthday 26 August ko hai. 26 August ke agle din tum bolo kal tumhara birthday tha. Ye baat kis din boli ja rahi hai?",
+ o:["25 August","27 August","28 August","26 August"],
+ a:1
+}
+
+];
+
+
+let qi=0;
+let chances=2;
+let locked=false;
+
+
+function loadQuestion(){
+
+ let q=questions[qi];
+
+ chances=2;
+ locked=false;
+
+ document.getElementById("qnumber")
+ .innerText=
+ "Question "+(qi+1)+" of 4";
+
+ document.getElementById("question")
+ .innerText=q.q;
+
+ document.getElementById("result")
+ .innerHTML="";
+
+ document.getElementById("next")
+ .style.display="none";
+
+ let box=
+ document.getElementById("options");
+
+ box.innerHTML="";
+
+ setTimeout(function(){
+
+  speak(
+   "Question number "+(qi+1)+
+   " aa gaya hai teri screen pe. "+
+   q.q
+  );
+
+ },300);
+
+
+ q.o.forEach(function(option,i){
+
+  let b=document.createElement("button");
+
+  b.innerText=
+  "Option "+
+  String.fromCharCode(65+i)+
+  " — "+
+  option;
+
+  b.onclick=function(){
+
+   if(locked)return;
+
+   speak(
+    "Option "+
+    String.fromCharCode(65+i)+
+    " — "+
+    option
+   );
+
+   setTimeout(function(){
+
+    answer(i);
+
+   },600);
+
+  };
+
+  box.appendChild(b);
+
+ });
+
+}
+
+
+function answer(i){
+
+ if(locked)return;
+
+ let q=questions[qi];
+
+ if(i===q.a){
+
+  locked=true;
+
+  document.getElementById("result")
+  .innerHTML=
+  "✨ CONGRATULATIONS! 🎉";
+
+  speak(
+   "Bilkul sahi jawab! Congratulations Duggu!"
+  );
+
+  sparkles();
+
+  document.querySelectorAll(
+   "#options button"
+  ).forEach(b=>b.disabled=true);
+
+  document.getElementById("next")
+  .style.display="block";
+
+ }else{
+
+  chances--;
+
+  if(chances===1){
+
+   document.getElementById("result")
+   .innerHTML=
+   "❌ Galat! Ek chance aur hai ❤️";
+
+   speak(
+    "Galat jawab! Koi baat nahi, ek chance aur hai."
+   );
+
+  }else{
+
+   locked=true;
+
+   document.getElementById("result")
+   .innerHTML=
+   "😭 TUMSE NA HO PAYEGA 😂";
+
+   speak(
+    "Do chances khatam! Tumse na ho payega!"
+   );
+
+   document.getElementById("next")
+   .style.display="block";
+  }
+ }
+}
+
+
+/* =========================
+NEXT
+========================= */
+
+function nextQuestion(){
+
+ qi++;
+
+ if(qi>=questions.length){
+
+  speak(
+   "Chaaro questions complete! Ab asli secret aata hai."
+  );
+
+  setTimeout(function(){
+
+   page(4);
+
+  },2200);
+
+ }else{
+
+  loadQuestion();
+
+ }
+}
+
+
+/* =========================
+SECRET
+========================= */
+
+function showSecret(){
+
+ document.getElementById("secretText")
+ .innerText=
+ "Achha Duggu! Options mein se bata tera secret naam kya hai? 😏";
+
+ speak(
+  "Achha Duggu! Options mein se bata tera secret naam kya hai?"
+ );
+
+ let box=
+ document.getElementById("secretOptions");
+
+ box.innerHTML="";
+
+ [
+  "Duggu 😎",
+  "Don 😂",
+  "Phoolchand 🌸"
+ ]
+ .forEach(function(name){
+
+  let b=document.createElement("button");
+
+  b.innerText=name;
+
+  b.onclick=function(){
+
+   if(name.includes("Phoolchand")){
+
+    document.getElementById("secretText")
+    .innerHTML=
+    "😂 OHHH! Sahi pakde!<br><br>"+
+    "<span class='secret'>PHOOLCHAND 🌸</span>";
+
+    speak(
+     "Haan bhai! Tera secret naam hai Phoolchand!"
+    );
+
+    sparkles();
+
+    setTimeout(function(){
+
+     page(5);
+
+     speak(
+      "Happy Birthday Duggu! God bless you!"
+     );
+
+    },3000);
+
+   }else{
+
+    document.getElementById("secretText")
+    .innerText=
+    "Galattt 😂 Ek aur try kar!";
+
+    speak(
+     "Galat! Ek aur try kar."
+    );
+
+   }
+
+  };
+
+  box.appendChild(b);
+
+ });
+}
+
+
+/* =========================
+SPARKLES
+========================= */
+
+function sparkles(){
+
+ for(let i=0;i<40;i++){
+
+  let s=
+  document.createElement("div");
+
+  s.className="spark";
+
+  s.innerText=
+  ["✨","⭐","🎉","💫","🌟","🎊"]
+  [Math.floor(Math.random()*6)];
+
+  s.style.left=
+  Math.random()*100+"vw";
+
+  s.style.top=
+  Math.random()*100+"vh";
+
+  document.body.appendChild(s);
+
+  setTimeout(
+   ()=>s.remove(),
+   1300
+  );
+
+ }
+}
+
+
+/* LOAD VOICES */
+
+if("speechSynthesis" in window){
+
+ speechSynthesis.onvoiceschanged=
+ function(){
+  speechSynthesis.getVoices();
+ };
+
+}
+
+</script>
+
+</body>
+</html>
